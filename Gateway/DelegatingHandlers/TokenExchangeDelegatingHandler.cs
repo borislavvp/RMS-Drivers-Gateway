@@ -78,7 +78,7 @@ namespace Gateway.DelegatingHandlers
             {
                 { "subject_token_type", "urn:ietf:params:oauth:token-type:access_token"},
                 { "subject_token", incomingToken},
-                { "scope", "openid profile orders.write" }
+                { "scope", "openid profile orders.read orders.write" }
             });
 
             var tokenResponse = await client.RequestTokenAsync(new TokenRequest()
