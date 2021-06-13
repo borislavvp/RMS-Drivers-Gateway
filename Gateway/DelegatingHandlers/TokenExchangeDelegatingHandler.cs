@@ -12,15 +12,12 @@ namespace Gateway.DelegatingHandlers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IClientAccessTokenCache _clientAccessTokenCache;
-
-
         public TokenExchangeDelegatingHandler(IHttpClientFactory httpClientFactory,
             IClientAccessTokenCache clientAccessTokenCache)
         {
             _clientAccessTokenCache = clientAccessTokenCache;
             _httpClientFactory = httpClientFactory;
         }
-
         public async Task<string> GetAccessToken(string incomingToken)
         {
             var item = await _clientAccessTokenCache
@@ -57,7 +54,7 @@ namespace Gateway.DelegatingHandlers
 
         private async Task<(string, int)> ExchangeToken(string incomingToken)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = _httpClientFactory.CreateClient("client");
 
             var discoveryDocumentResponse = await client
                 .GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
