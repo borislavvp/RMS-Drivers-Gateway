@@ -59,13 +59,13 @@ namespace Gateway.DelegatingHandlers
             var discoveryDocumentResponse = await client
                 .GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
                 {
-                    Address = "https://localhost:5001",
+                    Address = "https://51.141.4.73/api/v1/identity",
                     Policy =
                     {
                         ValidateIssuerName = false,
                     },
                 });
-           
+
             if (discoveryDocumentResponse.IsError)
             {
                 throw new Exception(discoveryDocumentResponse.Error);
