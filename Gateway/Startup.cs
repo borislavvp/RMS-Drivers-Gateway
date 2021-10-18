@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Gateway
@@ -37,20 +38,26 @@ namespace Gateway
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.WithOrigins("http://localhost:4200")
+                    builder => builder.WithOrigins(Configuration.GetValue<string>("DriversAppUrl"))
                         .AllowCredentials()
                         .AllowAnyMethod()
                         .AllowAnyHeader());
             });
 
+            // Disable certificates checking because we dont support them 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                    .AddJwtBearer(AuthenticationScheme, options =>
                    {
                        options.Authority = Authority;
                        options.Audience = Audience;
+                       options.BackchannelHttpHandler = new HttpClientHandler
+                       { ServerCertificateCustomValidationCallback = delegate { return true; } };
                    });
 
-            services.AddHttpClient();
+            // Disable certificates checking because we dont support them 
+            services.AddHttpClient("client")
+                .ConfigurePrimaryHttpMessageHandler((context) => new HttpClientHandler
+                { ServerCertificateCustomValidationCallback = delegate { return true; } });
 
             services.AddScoped<TokenExchangeDelegatingHandler>();
 
@@ -58,7 +65,7 @@ namespace Gateway
                 .AddDelegatingHandler<TokenExchangeDelegatingHandler>();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public async Task ConfigureAsync(IApplicationBuilder app, IWebHostEnvironment env)
+        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCors("CorsPolicy");
             if (env.IsDevelopment())

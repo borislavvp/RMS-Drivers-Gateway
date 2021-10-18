@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drivers-gateway
+  namespace:  ingress
+  labels:
+    app: drivers-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drivers-gateway
+  template:
+    metadata:
+      labels:
+        app: drivers-gateway
+    spec:
+      containers:
+      - name: drivers-gateway
+        image: acrproep01.azurecr.io/drivers-gateway:v1.4
+        ports:
+        - containerPort: 80

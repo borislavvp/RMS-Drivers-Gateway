@@ -12,15 +12,12 @@ namespace Gateway.DelegatingHandlers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IClientAccessTokenCache _clientAccessTokenCache;
-
-
         public TokenExchangeDelegatingHandler(IHttpClientFactory httpClientFactory,
             IClientAccessTokenCache clientAccessTokenCache)
         {
             _clientAccessTokenCache = clientAccessTokenCache;
             _httpClientFactory = httpClientFactory;
         }
-
         public async Task<string> GetAccessToken(string incomingToken)
         {
             var item = await _clientAccessTokenCache
@@ -57,18 +54,18 @@ namespace Gateway.DelegatingHandlers
 
         private async Task<(string, int)> ExchangeToken(string incomingToken)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = _httpClientFactory.CreateClient("client");
 
             var discoveryDocumentResponse = await client
                 .GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
                 {
-                    Address = "https://localhost:5001",
+                    Address = "https://51.141.4.73/api/v1/identity",
                     Policy =
                     {
                         ValidateIssuerName = false,
                     },
                 });
-           
+
             if (discoveryDocumentResponse.IsError)
             {
                 throw new Exception(discoveryDocumentResponse.Error);
